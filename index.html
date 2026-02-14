@@ -254,7 +254,7 @@
         <div class="divider" style="margin:20px auto;"></div>
         <div class="question">Will you be my <span class="accent">Valentine</span>?</div>
         <button class="btn-yes" onclick="sayYes()">Yes</button>
-        <button class="btn-no" id="noBtn" onclick="moveNo()">No</button>
+        <button class="btn-no" id="noBtn">No</button>
     </div>
 
     <!-- Final -->
@@ -293,6 +293,9 @@
             // Hide tap hint on question and final slides
             document.getElementById('tapHint').style.display =
                 (n >= 5) ? 'none' : 'block';
+
+            // Start the No button bouncing when we hit the question slide
+            if (n === 5) setTimeout(startNoBounce, 300);
         }
 
         function next() {
@@ -324,21 +327,41 @@
             }
         });
 
-        function moveNo() {
-            noCount++;
+        let noInterval = null;
+
+        function startNoBounce() {
             const btn = document.getElementById('noBtn');
-            const w = window.innerWidth - 120;
-            const h = window.innerHeight - 60;
             btn.style.position = 'fixed';
-            btn.style.left = (Math.random() * w) + 'px';
-            btn.style.top = (Math.random() * h) + 'px';
             btn.style.transition = 'none';
+            btn.style.zIndex = '1000';
 
-            const texts = ['nope','try again','not happening','lol','too slow',
+            const texts = ['No','nope','try again','not happening','lol','too slow',
                            'nice try','keep going','😏','never','just say yes'];
-            btn.textContent = texts[Math.min(noCount - 1, texts.length - 1)];
+            let idx = 0;
 
-            if (noCount >= 12) { btn.style.display = 'none'; sayYes(); }
+            function bounce() {
+                const w = window.innerWidth - 120;
+                const h = window.innerHeight - 60;
+                btn.style.left = (Math.random() * w) + 'px';
+                btn.style.top = (Math.random() * h) + 'px';
+                idx++;
+                if (idx < texts.length) btn.textContent = texts[idx];
+            }
+
+            // Bounce immediately and every 800ms
+            bounce();
+            noInterval = setInterval(bounce, 800);
+
+            // Also bounce on any click/tap attempt
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                bounce();
+            });
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                bounce();
+            }, { passive: false });
         }
 
         function sayYes() {
