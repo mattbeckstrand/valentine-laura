@@ -12,9 +12,12 @@
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             min-height: 100vh;
+            min-height: 100dvh;
             overflow: hidden;
             background: #0a0a0a;
             color: #f5f5f5;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .slide {
@@ -25,6 +28,7 @@
             text-align: center;
             padding: 40px 30px;
             min-height: 100vh;
+            min-height: 100dvh;
             width: 100%;
             position: absolute;
             top: 0; left: 0;
@@ -340,17 +344,17 @@
             let idx = 0;
 
             function bounce() {
-                const w = window.innerWidth - 120;
-                const h = window.innerHeight - 60;
-                btn.style.left = (Math.random() * w) + 'px';
-                btn.style.top = (Math.random() * h) + 'px';
+                const w = window.innerWidth - 140;
+                const h = window.innerHeight - 80;
+                btn.style.left = Math.max(10, Math.random() * w) + 'px';
+                btn.style.top = Math.max(20, Math.random() * h) + 'px';
                 idx++;
                 if (idx < texts.length) btn.textContent = texts[idx];
             }
 
             // Bounce immediately and every 800ms
             bounce();
-            noInterval = setInterval(bounce, 800);
+            noInterval = setInterval(bounce, 450);
 
             // Also bounce on any click/tap attempt
             btn.addEventListener('click', (e) => {
